@@ -1,0 +1,97 @@
+<html>
+	<head>
+		<title>Dream Up</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="./assets/css/main.css" />
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script>
+		function todo(){
+			$.get("http://140.114.67.175:81/balloonCount.php",function(data){
+				document.getElementById("BalloonNum").innerHTML=data;
+			});
+		}
+		</script>
+	</head>
+	<body onload="todo()">
+		<script>
+		var userName;
+
+		function statusChangeCallback(response){
+			if(response.status === 'connected'){
+				user();
+			}else{
+				alert("Login Error!")
+			}
+		}
+		
+		function checkLoginState() {
+			FB.getLoginStatus(function(response) {
+				statusChangeCallback(response);
+			});
+		}
+
+		function user() {
+			FB.api('/me', function(response) {
+				userName = response.name;
+				document.getElementById("sendfield").style.visibility="visible";
+				document.getElementById("login").style.display="none";
+			});
+		}
+
+		function addMsg(){
+			$.post( "http://140.114.67.175:81/addMsg.php", 
+				{ 
+					name: userName,
+				 	balloontype: Math.floor((Math.random() * 7) + 1),
+				 	message: document.getElementById("message").value
+				} 
+			);
+		}
+
+		window.fbAsyncInit = function() {
+	  		FB.init({
+	    		appId      : '1034359116626475',
+	    		cookie     : true,
+	    		xfbml      : true,
+	    		version    : 'v2.5'
+	  		});
+		};
+		(function(d, s, id){
+	   		var js, fjs = d.getElementsByTagName(s)[0];
+	   		if (d.getElementById(id)) {return;}
+	   		js = d.createElement(s); js.id = id;
+	   		js.src = "//connect.facebook.net/en_US/sdk.js";
+	   		fjs.parentNode.insertBefore(js, fjs);
+	 	}(document, 'script', 'facebook-jssdk'));
+		</script>
+		<div id="login" class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false" onlogin="checkLoginState()"></div></br>
+		<!-- Header -->
+			<header id="header">
+				<h1>Dream Up</h1>
+				<p>There are already <font size="6" id="BalloonNum"></font> balloons risen into the sky.</p>
+			</header>
+
+		<!-- Signup Form -->
+		<div id="sendfield" style="visibility:hidden">
+			<form id="signup-form">
+				<!-- <input type="text" name="name" id="name" style="display:none" value="'+response.name+'"/> -->
+				<!-- <input type="text" name="balloontype" id="ballontype" style="display:none"/> -->
+				<input type="text" name="message" id="message" placeholder="Say Something!" />
+				<input type="submit" onClick="addMsg()" value="Send" />
+			</form>
+		</div>
+		<!-- Footer -->
+			<footer id="footer">
+
+				<ul class="copyright">
+					<li>&copy; SCAD_final.</li><li>Team Dream Up</a></li>
+				</ul>
+			</footer>
+
+		<!-- Scripts -->
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
